@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"> 
+	
+<h:head>
+	<title>Koink | Categorias</title>
+	<link
+		href="https://fonts.googleapis.com/css?family=Poppins:700|Quicksand|Jua|Fredoka+One|Ubuntu|Open+Sans"
+		rel="stylesheet" />
+
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1, shrink-fit=no" />
+	<link rel="shortcut icon" href="resources/img/favicon.ico" />
+	<link rel="stylesheet" href="resources/css/bootstrap.min.css" />
+
+	<link href="resources/vendor/font-awesome-4.7/css/font-awesome.min.css"
+		rel="stylesheet" media="all" />
+	<link
+		href="resources/vendor/font-awesome-5/css/fontawesome-all.min.css"
+		rel="stylesheet" media="all" />
+	<link
+		href="resources/vendor/mdi-font/css/material-design-iconic-font.min.css"
+		rel="stylesheet" media="all" />
+		
+		<style>
+.alert, .li {
+	list-style-type: none;
+}
+
+li {
+	list-style-type: none;
+	display: inline-block;
+	font-size: 20px;
+}
+
+a {
+	text-decoration: none;
+	-webkit-text-decoration: none;
+	-moz-text-decoration: none;
+}
+
+a:-webkit-any-link {
+	text-decoration: none;
+}
+</style>
+</h:head>
+
+<body class="mx-auto" style="background-color:#25323f; padding:10px;">
+<p:growl id="mensagem"/>
+
+<div style="display:table; position:fixed;">
+
+<a href="configuracoes.xhtml"><div style="display:table-cell;">
+<i class="fas fa-cog" style="text-align:center; color:white; font-size:30px; padding:10px; border-radius:100px; background-color:#40EF79; width:50px; height:50px; margin:5px;"/>
+</div></a>
+
+<a href="dashboard.xhtml"><div style="display:table-cell;">
+<i class="fas fa-bar-chart" style="text-align:center; color:white; font-size:30px; padding:10px; border-radius:100px; background-color:#40EF79; width:50px; height:50px; margin:5px;"/>
+</div></a>
+</div>
+
+<div style="padding: 200px 100px;">
+	<div class="form-group">
+		<h:commandButton class="btn" style="background-color:#3BD1E8; color:white; font-family:'Ubuntu', sans-serif;" value="Adicionar Categoria" onclick="PF('dialogo').show();" update=":formCadastro:painelCadastro"/>
+	</div>
+
+
+	<div class="card" style="display:inline-block;">
+	<div class="card-header">Minhas Categorias</div>
+	<h:form id="formListagem" class="card-body" style="font-size:12px;">
+
+			<p:dataTable id="tabela" emptyMessage="Nenhuma categoria encontrada :("
+				paginator="false" value="#{tipoController.listaDeTipos}" var="tipo" rows="14">
+				
+				
+				<p:column headerText="Nome" sortBy="#{tipo.tipo}" filterBy="#{tipo.tipo}">
+					<h:outputText value="#{tipo.tipo}" />
+				</p:column>
+				
+				<p:column headerText="Tipo da Finança">
+					<h:outputText value="#{tipo.tipo_financa}" />
+				</p:column>
+				
+				<p:column headerText="Opções">
+				
+					<!--Botão de exclusão-->
+					<p:commandButton icon="ui-icon-trash" actionListener="#{tipoController.excluir}" update=":mensagem :formListagem:tabela">
+						<p:confirm header="Confirmação" message="Deseja realmente excluir este item?" icon="ui-icon-alert"/>
+						<f:attribute name="tipoSelecionado" value="#{tipo}"/>
+					</p:commandButton>
+					
+					<!--Botão de edição-->
+					<p:commandButton icon="ui-icon-pencil" actionListener="#{tipoController.editar}" update=":mensagem :formCadastro:painelCadastro"
+					onclick="PF('dialogo').show();">
+						<f:attribute name="tipoSelecionado" value="#{tipo}"/>
+					</p:commandButton>
+					
+				</p:column>
+				
+			</p:dataTable>
+			
+			<!--Botão de confirmação de diálogo global-->
+			<p:confirmDialog style="border-radius:0px;" global="true">
+        			<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        			<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+   			</p:confirmDialog>
+
+	</h:form>
+	</div>
+	
+	
+	<!--Janela flutuante - Tela da cadastros de tipos-->
+	<p:dialog style="border-radius:0px;" header="Cadastro de Categoria" widgetVar="dialogo" draggable="true" 
+	resizable = "false" modal = "true" closable= "false" showEffect="clip" hideEffect="clip">
+		<h:form id="formCadastro">
+		
+			<h:panelGrid class="mx-auto" columns ="1" id="painelCadastro">
+					<div class="form-group">
+						<h:outputLabel value="Nome: " />
+						<p:inputText class="form-control" maxlength="30" size="35"
+							value="#{tipoController.tipoNovo.tipo}" required="true"
+							requiredMessage="Nome da categoria não pode ficar em branco." />
+					</div>
+
+
+					<div class="form-group">
+					<p:outputLabel for="tipo" value="Tipo da Finança: "/>
+
+				<p:selectOneRadio id="tipo" value="#{tipoController.tipoNovo.tipo_financa}" 
+				required="true" requiredMessage="Selecione o tipo da finança">
+					<f:selectItem itemValue="RECEITA" itemLabel="Receita"/>
+					<f:selectItem itemValue="DESPESA" itemLabel="Despesa"/>
+				</p:selectOneRadio>
+				</div>
+				<p/>
+			</h:panelGrid>
+			
+
+			<div class="form-group">
+				<p:commandButton value ="Salvar" actionListener="#{tipoController.salvar()}" 
+				update=":mensagem :formCadastro:painelCadastro :formListagem:tabela"/>
+				<p:commandButton value ="Cancelar" actionListener="#{tipoController.novo()}" onclick="PF('dialogo').hide();"/>
+			</div>
+			
+
+			
+		</h:form>
+	</p:dialog>
+</div>
+
+	<script src="resources/js/popper.min.js" />
+	<script src="resources/js/bootstrap.min.js" />
+
+</body>
+	
+
+
+</html>

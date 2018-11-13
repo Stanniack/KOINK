@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<ui:composition template="template.xhtml">
+<ui:define name="titulo-conteudo">Lembretes</ui:define>
+<ui:define name="titulo-card">LEMBRETES</ui:define>
+<ui:define name="conteudo">
+<p:growl id="mensagem"/>
+	
+	<div class="form-group">
+		<h:commandButton class="btn" style="background-color:#F05951; color:white; font-family:'Ubuntu', sans-serif; font-weight:bold;" value="Novo Lembrete" onclick="PF('dialogo').show();" update=":formCadastro:painelCadastro"/>
+	</div>
+
+	    <!--Janela flutuante - Tela da cadastros de lembretes-->
+		<p:dialog style="border-radius:0px;" header="Novo Lembrete" widgetVar="dialogo" draggable="true" resizable = "false" modal = "true" closable= "false" showEffect="clip" hideEffect="clip">
+			<h:form id="formCadastro">
+			
+				<h:panelGrid columns ="2" id="painelCadastro">
+				
+					<p:outputLabel value="Descrição: "/>
+					<p:inputText maxlength="200" size="35" value="#{lembreteController.lembrete.descricao}" 
+					required="true" requiredMessage="É necessário uma descrição para o lembrete"/>
+					
+					<p:outputLabel for="data_inicio_aviso" value="Data dos avisos: "/>
+					<p:calendar id="data_inicio_aviso" value="#{lembreteController.lembrete.data_inicio_aviso}" locale="pt_BR" 
+					required="true" requiredMessage="Data pra início dos avisos necessária"/>
+					
+					<p:outputLabel for="data_finalizacao" value="Data da finalização: "/>
+					<p:calendar id="data_finalizacao" value="#{lembreteController.lembrete.data_finalizacao}" locale="pt_BR"
+					required="true" requiredMessage="Data de finalização dos lembretes necessária"/>
+					
+					
+				</h:panelGrid>
+				
+				<h:panelGrid columns ="2">
+					<p:commandButton value ="Salvar" actionListener="#{lembreteController.salvar()}" 
+					update=":mensagem :formCadastro:painelCadastro :form:lembretes"/>
+					<p:commandButton value ="Cancelar" oncomplete="PF('dialogo').hide();" actionListener="#{lembreteController.novo()}" />
+				</h:panelGrid>
+				
+			</h:form>
+		</p:dialog>
+
+
+
+		<div class="card" style="display:inline-block;">
+	<div class="card-header">Meus Lembretes</div>
+	<h:form id="form" class="card-body" style="font-size:12px;">
+
+		<p:dataGrid id="lembretes" var="lembrete" value="#{lembreteController.listaDeLembretes}" columns="5" paginator="false" 
+	        emptyMessage="Nenhum lembrete encontrado :(">
+		    
+		    <p:panel header="#{lembrete.data_finalizacao}" style="text-align:center">
+	            <h:panelGrid columns="1" style="width:100%">
+
+	 				<!--Aqui vai uma imagem-->
+	                <h:outputText value="#{lembrete.descricao}" />
+	 				
+	 
+	                <p:commandLink update=":form:lembreteDetalhes" oncomplete="PF('lembreteDialogo').show()" title="Mais detalhes">
+	                    <h:outputText styleClass="ui-icon ui-icon-search" style="margin:0 auto;" />
+	                    <f:setPropertyActionListener value="#{lembrete}" target="#{lembreteController.lembrete}" />
+	                </p:commandLink>
+	                
+	                <!--Botão de exclusão-->
+					<p:commandButton icon="ui-icon-trash" actionListener="#{lembreteController.excluir}" update=":mensagem :form:lembretes">
+						<p:confirm header="Confirmação" message="Deseja realmente excluir este lembrete?" icon="ui-icon-alert"/>
+						<f:attribute name="lembreteSelecionado" value="#{lembrete}"/>
+					</p:commandButton>
+					
+					<!--Botão de edição-->
+					<p:commandButton icon="ui-icon-pencil" actionListener="#{lembreteController.editar}" update=":mensagem :formCadastro:painelCadastro"
+					oncomplete="PF('dialogo').show();">
+						<f:attribute name="lembreteSelecionado" value="#{lembrete}"/>
+					</p:commandButton>
+	                
+	            </h:panelGrid>
+        	</p:panel>
+        </p:dataGrid>
+        
+        <!--Botão de confirmação de diálogo global-->
+		<p:confirmDialog global="true">
+        	<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        	<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+   		</p:confirmDialog>
+     
+
+        
+        <!--Janela flutuante de informações-->
+        <p:dialog header="Informações do lembrete" widgetVar="lembreteDialogo" 
+        	modal="false" showEffect="fade" hideEffect="fade" resizable="false">
+        	<p:outputPanel id="lembreteDetalhes" style="text-align:center;">
+            	<p:panelGrid  columns="2" columnClasses="label,value">
+            		
+                	<f:facet name="header">
+                   		 <!--Aqui vai uma imagem-->
+               		   </f:facet>
+ 
+               		<h:outputText value="Descrição:" />
+              		<h:outputText value="#{lembreteController.lembrete.descricao}" />
+ 
+		            <h:outputText value="Data do início do aviso na página principal:" />
+		            <h:outputText value="#{lembreteController.lembrete.data_inicio_aviso}" />
+ 
+		            <h:outputText value="Data da finalização:" />
+		            <h:outputText value="#{lembreteController.lembrete.data_finalizacao}"/>
+		            
+		                
+                </p:panelGrid>
+        	</p:outputPanel>
+    	</p:dialog>
+    	
+    </h:form>
+    </div>	
+
+        	
+</ui:define>
+</ui:composition>
+
+
+
+
+</html>

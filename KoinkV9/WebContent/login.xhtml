@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Koink | Login</title>
+	<link
+		href="https://fonts.googleapis.com/css?family=Poppins:700|Quicksand|Jua|Fredoka+One|Ubuntu|Open+Sans"
+		rel="stylesheet" />
+
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1, shrink-fit=no" />
+	<link rel="shortcut icon" href="resources/img/favicon.ico" />
+	<link rel="stylesheet" href="resources/css/bootstrap.min.css" />
+
+	<link href="resources/vendor/font-awesome-4.7/css/font-awesome.min.css"
+		rel="stylesheet" media="all" />
+	<link
+		href="resources/vendor/font-awesome-5/css/fontawesome-all.min.css"
+		rel="stylesheet" media="all" />
+	<link
+		href="resources/vendor/mdi-font/css/material-design-iconic-font.min.css"
+		rel="stylesheet" media="all" />
+		
+		<style>
+			.alert, .li{
+				list-style-type: none;
+			}
+
+			li{
+				list-style-type: none;
+				display:inline-block;
+				font-size:20px;
+			}
+	</style>
+</h:head>
+
+<body style="background-color:#25323f;">
+
+<div class="container">
+			<div class="row">
+				<div class="col-6 mx-auto">
+					<h:messages id="msg" globalOnly="true" class="alert alert-danger alerta"/>
+				</div>
+			</div>
+			
+			<div class="row" style="padding-top:50px;">
+				<div class="col-5 mx-auto">
+					<div class="card mt-5 border-0" style="background-color:transparent;">
+						<div class="card-body">
+						
+							<div class="form-group" style="text-align:center;">
+							<div class="mx-auto" style="text-align:center; color:white; font-size:48px; font-family:'Fredoka One', sans-serif;">Koink</div>
+											<li class="nav-item mr-3"><i class="fas fa-bar-chart" style="color: #8478C9;"></i></li>
+
+			<li class="nav-item mr-3" style="text-align: center;"><i class="fas fa-credit-card" style="color: #3BD1E8;"></i></li>
+
+			<li class="nav-item mr-3" style="text-align: center;"><i class="fas fa-shopping-cart" style="color: #FFCC49;"></i></li>
+
+			<li class="nav-item mr-3" style="text-align: center;"><i class="fas fa-trophy" style="color: #40EF79;"></i></li>
+
+			<li class="nav-item mr-3" style="text-align: center;"><i class="fas fa-calendar" style="color: #F05951;"></i></li>
+							</div>
+							
+							<h:form>
+								<div class="form-group" style="color:white;">
+									<h:outputLabel value="Login" for="login"/>
+									<h:inputText id="login" 
+									value="#{loginController.usuario.usuario}" required="true" requiredMessage="Login obrigatório."
+									class="form-control border-0"/><!--  --> 
+									<h:message for="login" style="color:#7c00db;"/>
+								</div>
+								
+								<div class="form-group" style="color:white;">
+									<h:outputLabel value="Senha" for="senha"/>
+									<h:inputText id="senha" 
+									value="#{loginController.usuario.senha}" required="true" requiredMessage="Senha obrigatória."
+									class="form-control border-0"><!--  -->
+										<f:passThroughAttribute name="type" value="password"/>
+									</h:inputText>
+									<h:message for="senha" style="color:#7c00db;"/>
+								</div>
+								<p/>
+								<div class="form-group mt-5">
+									<h:commandButton value="Login" action="#{loginController.logar}" class="btn btn-block" style="background-color:#3BD1E8; color:white;"/>
+								</div>
+								
+								
+								<div style="color:white;">Não possui uma conta?</div> <a href="cadastro.xhtml" style="color:#3BD1E8;">Cadastre-se!</a>
+							</h:form>		
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+</body>
+
+
+</html>

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<ui:composition template="template.xhtml">
+	<ui:define name="titulo-conteudo">Metas</ui:define>
+	<ui:define name="titulo-card">METAS</ui:define>
+
+	<ui:define name="conteudo">
+
+
+		<p:growl id="mensagem" />
+
+		<div class="form-group">
+			<h:commandButton class="btn"
+				style="background-color:#40EF79; color:white; font-family:'Ubuntu', sans-serif; font-weight:bold;"
+				value="Nova Meta" onclick="PF('dialogo').show();"
+				update=":formCadastro:painelMeta :mensagem" />
+		</div>
+
+		<!--Janela flutuante - Tela de cadastros de receitas-->
+		<p:dialog style="border-radius:0px;" header="Nova Meta"
+			widgetVar="dialogo" draggable="true" resizable="false" modal="true"
+			closable="false" showEffect="clip" hideEffect="clip">
+			<h:form id="formCadastro">
+
+				<h:panelGrid columns="1" id="painelMeta">
+
+					<h:panelGrid columns="1">
+						<p:outputLabel value="Nome: " />
+						<h:inputText class="form-control" maxlength="45" size="35"
+							value="#{metaController.meta.nome}" required="true"
+							requiredMessage="Nome necessário" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="1">
+						<p:outputLabel value="Descrição: " />
+						<h:inputText class="form-control" maxlength="100" size="35"
+							value="#{metaController.meta.descricao}" required="true"
+							requiredMessage="Descrição necessária" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="1">
+						<p:outputLabel value="Valor: " />
+						<h:inputText size="35" class="form-control" value="#{metaController.meta.valor}"
+							required="true" requiredMessage="Por favor, insira um valor" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="1">
+					<p:outputLabel for="data_inicio" value="Início da meta:" />
+					<p:calendar id="data_inicio"
+						value="#{metaController.meta.data_inicio}"
+						locale="pt_BR" required="true"
+						requiredMessage="Data do início da meta necessária!" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="1">
+					<p:outputLabel for="data_finalizacao" value="Data da finalização:" />
+					<p:calendar id="data_finalizacao"
+						value="#{metaController.meta.data_finalizacao}"
+						locale="pt_BR" required="true"
+						requiredMessage="Data de finalização da meta necessária!" />
+				    </h:panelGrid>
+
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						actionListener="#{metaController.salvar()}"
+						update=":mensagem :formCadastro:painelMeta :formListagem:tabela" />
+					<p:commandButton value="Cancelar"
+						actionListener="#{metaController.novo()}"
+						oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+
+
+
+
+
+
+		<div class="card" style="display: inline-block;">
+			<div class="card-header">Minhas Metas</div>
+			<h:form id="formListagem" class="card-body" style="font-size:12px;">
+
+				<p:dataTable id="tabela" emptyMessage="Nenhuma meta encontrada :("
+					paginator="false" value="#{metaController.listaDeMetas}" var="meta"
+					rows="10">
+
+					<p:column headerText="Nome">
+						<h:outputText value="#{meta.nome}" />
+					</p:column>
+
+					<p:column headerText="Descrição">
+						<h:outputText value="#{meta.descricao}" />
+					</p:column>
+
+					<p:column headerText="Valor">
+						<h:outputText value="#{meta.valor}" />
+					</p:column>
+					
+					<p:column headerText="Progresso ">
+						<h:outputText value="#{meta.porcentagem_finalizacao} %" />
+					</p:column>
+					
+					<p:column headerText="Início ">
+						<h:outputText value="#{meta.data_inicio}" />
+					</p:column>
+					
+					<p:column headerText="Fim ">
+						<h:outputText value="#{meta.data_finalizacao}" />
+					</p:column>
+					
+					<p:column headerText="Data Finalizada ">
+						<h:outputText value="#{meta.finalizada}" />
+					</p:column>
+					
+					<p:column headerText="Meta Concluída ">
+						<h:outputText value="#{meta.meta_cumprida}" />
+					</p:column>
+
+
+
+
+					<p:column headerText="Opções">
+
+						<!--Botão de exclusão-->
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{metaController.excluir}"
+							update=":mensagem :formListagem:tabela">
+							<p:confirm header="Confirmação"
+								message="Deseja realmente excluir esta meta?"
+								icon="ui-icon-alert" />
+							<f:attribute name="metaSelecionada" value="#{meta}" />
+						</p:commandButton>
+
+						<!--Botão de edição-->
+						<p:commandButton icon="ui-icon-pencil"
+							actionListener="#{metaController.editar}"
+							update=":mensagem :formCadastro:painelMeta"
+							onclick="PF('dialogo').show();">
+							<f:attribute name="metaSelecionada" value="#{meta}" />
+						</p:commandButton>
+
+					</p:column>
+
+				</p:dataTable>
+
+				<!--Botão de confirmação de diálogo global-->
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+
+			</h:form>
+		</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	</ui:define>
+
+</ui:composition>
+
+</html>

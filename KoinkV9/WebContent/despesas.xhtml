@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="template.xhtml">
+<ui:define name="titulo-conteudo">Despesas</ui:define>
+<ui:define name="titulo-card">DESPESAS</ui:define>
+<ui:define name="conteudo">
+<p:growl id="mensagem"/>
+
+	<div class="form-group">
+		<h:commandButton class="btn border-warning" style="background-color:#FFCC49; color:white; font-family:'Ubuntu', sans-serif; font-weight:bold;" value="Nova Despesa" onclick="PF('dialogo').show();" update=":formCadastro:painelCadastro"/>
+	</div>
+
+<!--  Janela flutuante - Tela de cadastros de despesas -->
+	<p:dialog style="border-radius:0px;" header="Nova Despesa" widgetVar="dialogo" draggable="true" resizable = "false" modal = "true" closable= "false" showEffect="clip" hideEffect="clip">
+		<h:form id="formCadastro">
+		
+			<h:panelGrid columns ="1" id="painelCadastro">
+				
+
+				<h:panelGrid columns="1">
+					<p:outputLabel value="Tipo: "/>
+					<p:selectOneMenu filter ="true" value="#{despesaController.despesa.tipo}" converter="omnifaces.SelectItemsConverter" required="true" requiredMessage="Por favor, escolha uma categoria para a despesa">
+						<f:selectItem  noSelectionOption="true" itemLabel="Selecione um tipo" />
+						<f:selectItems value="#{despesaController.listaDeTipos}" var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.tipo}"/>
+					</p:selectOneMenu>
+				</h:panelGrid>
+				
+				<h:panelGrid columns="1">
+				<p:outputLabel value="Valor:"/>
+				<p:inputText maxlength="100" value="#{despesaController.despesa.valor}" required="true" requiredMessage="É necessário inserir um valor"/>
+				</h:panelGrid>
+				
+				<h:panelGrid columns="1">
+				<p:outputLabel value="Descrição:"/>
+				<p:inputText maxlength="100" value="#{despesaController.despesa.descricao}" required="true" requiredMessage="É necessário inserir uma descrição"/>
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+				<p:outputLabel for="pago" value="Pago"/>
+				<p:selectBooleanCheckbox id="pago" value="#{despesaController.despesa.pago}"/>
+				</h:panelGrid>
+				
+				<h:panelGrid>
+				<p:outputLabel value="Forma de pagamento: "/>
+				<p:selectOneMenu filter ="false" value="#{despesaController.despesa.pagamento}" converter="omnifaces.SelectItemsConverter">
+					<f:selectItem  noSelectionOption="true" itemLabel="Selecione uma forma" />
+					<f:selectItems value="#{despesaController.formaDePagamento}" var="receita" itemValue="#{receita}" itemLabel="#{despesaController.despesa.pagamento}"/>
+				</p:selectOneMenu>
+				</h:panelGrid>
+			
+				
+			</h:panelGrid>
+			
+			<h:panelGrid columns ="2">
+				<p:commandButton value ="Salvar" actionListener="#{despesaController.salvar()}" 
+				update=":mensagem :formCadastro:painelCadastro :formListagem:tabela"/>
+				<p:commandButton value ="Cancelar" actionListener="#{despesaController.novo()}" oncomplete="PF('dialogo').hide();"/>
+				
+			</h:panelGrid>
+			
+		</h:form>
+	</p:dialog>
+
+	<div class="card" style="display:inline-block;">
+	<div class="card-header">Minhas Despesas</div>
+	<h:form id="formListagem" class="card-body" style="font-size:12px;">
+
+			<p:dataTable id="tabela" emptyMessage="Nenhuma despesa encontrada :(" paginator="false"
+			value="#{despesaController.listaDeDespesas}" var="despesa" rows="10">
+				
+				<p:column headerText="Tipo" sortBy="#{despesa.tipo.tipo}">
+					<h:outputText value="#{despesa.tipo.tipo}" />
+				</p:column>
+				
+				<p:column headerText="Valor" sortBy="#{despesa.valor}">
+					<h:outputText value="#{despesa.valor}" />
+				</p:column>
+				
+				<p:column headerText="Descrição" sortBy="#{despesa.descricao}">
+					<h:outputText value="#{despesa.descricao}" />
+				</p:column>
+				
+				<p:column headerText="Data criação" sortBy="#{despesa.data_criacao}">
+					<h:outputText value="#{despesa.data_criacao}" />
+				</p:column>
+				
+				<p:column headerText="Pago" sortBy="#{despesa.pago}">
+					<h:outputText value="#{despesa.pago}" />
+				</p:column>
+				
+				<p:column headerText="Método" sortBy="#{espesa.pagamento}">
+					<h:outputText value="#{despesa.pagamento}" />
+				</p:column>
+				
+				<p:column headerText="Opções">
+				
+					<!--Botão de exclusão-->
+					<p:commandButton icon="ui-icon-trash" actionListener="#{despesaController.excluir}" update=":mensagem :formListagem:tabela">
+						<p:confirm header="Confirmação" message="Deseja realmente excluir este item?" icon="ui-icon-alert"/>
+						<f:attribute name="despesaSelecionada" value="#{despesa}"/>
+					</p:commandButton>
+					
+					<!--Botão de edição-->
+					<p:commandButton icon="ui-icon-pencil" actionListener="#{despesaController.editar}" update=":mensagem :formCadastro:painelCadastro"
+					onclick="PF('dialogo').show();">
+						<f:attribute name="despesaSelecionada" value="#{despesa}"/>
+					</p:commandButton>
+					
+				</p:column>
+				
+			</p:dataTable>
+			
+			<!--Botão de confirmação de diálogo global-->
+			<p:confirmDialog global="true">
+        			<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        			<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+   			</p:confirmDialog>
+
+	</h:form>
+	</div>
+
+</ui:define>
+</ui:composition>
+
+
+</html>

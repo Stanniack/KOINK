@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<ui:composition template="template.xhtml">
+<ui:define name="titulo-conteudo">Receitas</ui:define>
+<ui:define name="titulo-card">RECEITAS</ui:define>
+
+<ui:define name="conteudo">
+
+<p:growl id="mensagem"/>
+
+	<div class="form-group">
+		<h:commandButton class="btn" style="background-color:#3BD1E8; color:white; font-family:'Ubuntu', sans-serif; font-weight:bold;" value="Nova Receita" onclick="PF('dialogo').show();" update=":formCadastro:painelCadastro :mensagem"/>
+	</div>
+	
+	<!--Janela flutuante - Tela de cadastros de receitas-->
+	<p:dialog  style="border-radius:0px;" header="Nova Receita" widgetVar="dialogo" draggable="true" resizable = "false" modal = "true" closable= "false" showEffect="clip" hideEffect="clip">
+		<h:form id="formCadastro">
+		
+			<h:panelGrid columns ="1" id="painelCadastro">
+				
+				<!--Tem que buscar no banco!-->
+				<h:panelGrid columns ="1">
+				<p:outputLabel value="Tipo: "/>
+				<p:selectOneMenu filter ="true" value="#{receitaController.receita.tipo}"  
+				converter="omnifaces.SelectItemsConverter" required="true" requiredMessage="Por favor, escolha uma categoria para a receita">
+					<f:selectItem  noSelectionOption="true" itemLabel="Selecione um tipo" />
+					<f:selectItems value="#{receitaController.listaDeTipos}" var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.tipo}"/>
+				</p:selectOneMenu>
+				</h:panelGrid>
+				
+				<h:panelGrid columns="1">
+				<p:outputLabel value="Valor: "/>
+				<p:inputText size="35" value="#{receitaController.receita.valor}" required="true" requiredMessage="Por favor, insira um valor"/>
+				</h:panelGrid>
+				
+				<h:panelGrid columns="1">
+				<p:outputLabel value="Descrição: "/>
+				<p:inputText maxlength="100" size="35" value="#{receitaController.receita.descricao}" required="true" requiredMessage="Por favor, insira uma descrição"/>
+				</h:panelGrid>
+				
+				<!--SIM OU NÃO-->
+				<h:panelGrid columns="2">
+				<p:outputLabel for="fixo" value="Valor fixo: "/>
+				<p:selectBooleanCheckbox id="fixo" value="#{receitaController.receita.fixa}"/>
+				</h:panelGrid>
+				
+				<h:panelGrid columns="1">
+				<p:outputLabel for="dataFixamento" value="Dia do fixamento: "/>
+				<p:calendar id="dataFixamento" value="#{receitaController.receita.data_fixamento}" locale="pt_BR"/>
+				</h:panelGrid>
+				
+			</h:panelGrid>
+			
+			<h:panelGrid columns ="2">
+				<p:commandButton value ="Salvar" actionListener="#{receitaController.salvar()}" 
+				update=":mensagem :formCadastro:painelCadastro :formListagem:tabela"/>
+				<p:commandButton value ="Cancelar" actionListener="#{receitaController.novo()}" oncomplete="PF('dialogo').hide();"/>
+			</h:panelGrid>
+			
+		</h:form>
+	</p:dialog>
+	
+	
+	
+	
+	
+	
+	
+	<div class="card" style="display:inline-block;">
+	<div class="card-header">Minhas Receitas</div>
+	<h:form id="formListagem" class="card-body" style="font-size:12px;">
+
+			<p:dataTable id="tabela" emptyMessage="Nenhuma receita encontrada :(" paginator="false"
+			value="#{receitaController.listaDeReceitas}" var="receita" rows="10">
+				
+				<p:column headerText="Tipo" sortBy="#{receita.tipo.tipo}" >
+					<h:outputText value="#{receita.tipo.tipo}" />
+				</p:column>
+				
+				<p:column headerText="Valor" sortBy="#{receita.valor}">
+					<h:outputText value="#{receita.valor}" />
+				</p:column>
+				
+				<p:column headerText="Descrição" sortBy="#{receita.descricao}">
+					<h:outputText value="#{receita.descricao}" />
+				</p:column>
+				
+				<p:column headerText="Data" sortBy="#{receita.data_criacao.time}">
+					<h:outputText value="#{receita.data_criacao}" />
+				</p:column>
+				
+				<p:column headerText="Valor Fixo" sortBy="#{receita.fixa}">
+					<h:outputText value="#{receita.fixa}" />
+				</p:column>
+				
+				<p:column headerText="Dia do Fixamento" sortBy="#{receita.data_fixamento}">
+					<h:outputText value="#{receita.data_fixamento}" />
+				</p:column>
+				
+				<p:column headerText="Opções">
+				
+					<!--Botão de exclusão-->
+					<p:commandButton icon="ui-icon-trash" actionListener="#{receitaController.excluir}" update=":mensagem :formListagem:tabela">
+						<p:confirm header="Confirmação" message="Deseja realmente excluir este item?" icon="ui-icon-alert"/>
+						<f:attribute name="receitaSelecionada" value="#{receita}"/>
+					</p:commandButton>
+					
+					<!--Botão de edição-->
+					<p:commandButton icon="ui-icon-pencil" actionListener="#{receitaController.editar}" update=":mensagem :formCadastro:painelCadastro"
+					onclick="PF('dialogo').show();">
+						<f:attribute name="receitaSelecionada" value="#{receita}"/>
+					</p:commandButton>
+					
+				</p:column>
+				
+			</p:dataTable>
+			
+			<!--Botão de confirmação de diálogo global-->
+			<p:confirmDialog global="true">
+        			<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        			<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+   			</p:confirmDialog>
+
+	</h:form>
+</div>
+	
+	
+</ui:define>
+</ui:composition>
+	        
+		        
+
+</html>

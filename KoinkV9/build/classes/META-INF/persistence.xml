@@ -1,0 +1,40 @@
+﻿<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+        http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+    version="2.0">
+
+    <!-- unidade de persistencia com o nome a ser definido -->
+    <persistence-unit name="projeto">
+
+        <!-- Implementação do JPA, no nosso caso Hibernate -->
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <!-- Aqui são listadas todas as entidades -->
+        
+        <class>package br.projeto.interdisciplinar.model.Usuario</class>
+        <class>package br.projeto.interdisciplinar.model.Financa</class>
+        <class>package br.projeto.interdisciplinar.model.Receita</class>
+        <class>package br.projeto.interdisciplinar.model.Tipo</class> 
+        <class>package br.projeto.interdisciplinar.model.Lembrete</class>
+        <class>package br.projeto.interdisciplinar.model.Meta</class>  
+
+        <properties>    
+            <!-- Propriedades JDBC -->
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/koink" />
+
+            <property name="javax.persistence.jdbc.user" value="root" />
+            <property name="javax.persistence.jdbc.password" value="" />
+
+            <!-- Configurações específicas do Hibernate -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" /> 
+            <!-- Gera sql específico do banco - linguagem -->
+
+            <property name="hibernate.hbm2ddl.auto" value="update" /> <!-- Cria tabelas e atualiza colunas (incremento, não apaga nada). Outras: create, create-drop, none -->
+            <property name="hibernate.show_sql" value="true" /> <!-- Mostra sql executado -->
+            <property name="hibernate.format_sql" value="true" /> <!-- Formata sql execuitado -->
+        </properties>
+    </persistence-unit>
+</persistence>
